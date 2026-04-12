@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:api": "npm run dev --prefix server",
+    "migrate": "npm run migrate --prefix server",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
