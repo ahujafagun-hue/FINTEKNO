@@ -1,6 +1,5 @@
 import { AuthProvider } from './context/AuthContext';
 import { useTab, TabProvider } from './context/TabContext';
-import OauthReturnHandler from './components/OauthReturnHandler';
 import TabNav from './components/TabNav';
 import Landing from './screens/Landing';
 import OnboardProfile from './screens/OnboardProfile';
@@ -62,7 +61,6 @@ function Screens() {
 export default function App() {
   return (
     <TabProvider>
-      <OauthReturnHandler />
       <AuthProvider>
         <h1 className="sr-only">FINTEKNO AI — AI Job Agents for Indian Freshers and Students</h1>
         <TabNav />

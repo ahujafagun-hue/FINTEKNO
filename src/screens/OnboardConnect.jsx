@@ -1,61 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import BrowserChrome from '../components/BrowserChrome';
-import { fetchOAuthStatus, prepareGoogleOAuth, prepareLinkedInOAuth } from '../api/oauthApi';
-import { useAuth } from '../context/AuthContext';
 import { useTab } from '../context/TabContext';
 
 export default function OnboardConnect() {
   const { switchTab } = useTab();
-  const { token } = useAuth();
-  const [status, setStatus] = useState(null);
-  const [loadErr, setLoadErr] = useState('');
-  const [connecting, setConnecting] = useState(null);
+  const [status] = useState({
+    connectedCount: 2,
+    linkedin: { connected: true },
+    google: { connected: true },
+    naukri: { connected: false, message: 'Not available via OAuth yet.' },
+    indeed: { connected: false, message: 'Not available via OAuth yet.' },
+  });
   const [hint, setHint] = useState('');
-
-  useEffect(() => {
-    if (!token) return undefined;
-    let cancelled = false;
-    (async () => {
-      try {
-        setLoadErr('');
-        const s = await fetchOAuthStatus(token);
-        if (!cancelled) setStatus(s);
-      } catch (e) {
-        if (!cancelled) setLoadErr(e.message || 'Could not load connection status');
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [token]);
-
-  const goGoogle = async () => {
-    if (!token) return;
-    setConnecting('google');
-    setHint('');
-    try {
-      const { url } = await prepareGoogleOAuth(token);
-      window.location.href = url;
-    } catch (e) {
-      setHint(e.message || 'Google connect failed');
-      setConnecting(null);
-    }
-  };
-
-  const goLinkedIn = async () => {
-    if (!token) return;
-    setConnecting('linkedin');
-    setHint('');
-    try {
-      const { url } = await prepareLinkedInOAuth(token);
-      window.location.href = url;
-    } catch (e) {
-      setHint(e.message || 'LinkedIn connect failed');
-      setConnecting(null);
-    }
-  };
-
-  const s = token ? status : null;
+  const s = status;
   const li = s?.linkedin?.connected;
   const gm = s?.google?.connected;
   const connectedCount = s?.connectedCount ?? 0;
@@ -93,9 +50,6 @@ export default function OnboardConnect() {
           <div className="ob-form-title">Connect platforms</div>
           <p className="ob-form-sub">Connect once. Agents handle everything from here.</p>
 
-          {loadErr ? (
-            <p style={{ fontSize: 12, color: 'var(--red)', marginBottom: 10 }}>{loadErr}</p>
-          ) : null}
           {hint ? (
             <p style={{ fontSize: 12, color: 'var(--amber)', marginBottom: 10 }}>{hint}</p>
           ) : null}
@@ -131,8 +85,8 @@ export default function OnboardConnect() {
                 ✓
               </div>
             ) : (
-              <button type="button" className="btn-ghost-sm" disabled={!token || connecting} onClick={goLinkedIn}>
-                {connecting === 'linkedin' ? '…' : 'Connect'}
+              <button type="button" className="btn-ghost-sm" onClick={() => setHint('LinkedIn connected in mock mode')}>
+                Connect
               </button>
             )}
           </div>
@@ -168,8 +122,8 @@ export default function OnboardConnect() {
                 ✓
               </div>
             ) : (
-              <button type="button" className="btn-ghost-sm" disabled={!token || connecting} onClick={goGoogle}>
-                {connecting === 'google' ? '…' : 'Connect'}
+              <button type="button" className="btn-ghost-sm" onClick={() => setHint('Gmail connected in mock mode')}>
+                Connect
               </button>
             )}
           </div>
@@ -245,7 +199,7 @@ export default function OnboardConnect() {
             <div style={{ fontSize: 11, color: 'var(--text2)' }}>
               {li && gm
                 ? 'LinkedIn + Gmail connected. Naukri/Indeed need platform partnerships — see Info.'
-                : 'Use Connect for LinkedIn and Gmail (configure OAuth keys in the API server).'}
+                : 'Use Connect for LinkedIn and Gmail (mock mode).'}
             </div>
           </div>
           <button

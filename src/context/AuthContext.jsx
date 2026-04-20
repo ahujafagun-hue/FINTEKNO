@@ -1,5 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import * as authApi from '../api/authApi';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 const TOKEN_KEY = 'fintekno_token';
 
@@ -7,8 +6,18 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(() => localStorage.getItem(TOKEN_KEY));
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(!!localStorage.getItem(TOKEN_KEY));
+  const [user, setUser] = useState(() => {
+    const t = localStorage.getItem(TOKEN_KEY);
+    if (!t) return null;
+    return {
+      id: 'mock-user-1',
+      email: 'aryan.rathi@email.com',
+      profile: {
+        resume: null,
+      },
+    };
+  });
+  const [loading, setLoading] = useState(false);
 
   const setToken = useCallback((t) => {
     setTokenState(t);
@@ -23,28 +32,34 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    try {
-      const { user: u } = await authApi.fetchMe(t);
-      setUser(u);
-    } catch {
-      setToken(null);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
+    setUser((prev) => prev || { id: 'mock-user-1', email: 'aryan.rathi@email.com', profile: { resume: null } });
+    setLoading(false);
   }, [setToken]);
 
-  useEffect(() => {
-    loadMe();
-  }, [loadMe]);
-
   const requestOtp = useCallback(async (email, intent) => {
-    return authApi.requestOtp({ email, intent });
+    return {
+      ok: true,
+      dev: true,
+      message: 'Mock OTP sent',
+      code: '123456',
+      email,
+      intent,
+    };
   }, []);
 
   const verifyOtp = useCallback(
     async (email, code, intent, profile) => {
-      const data = await authApi.verifyOtp({ email, code, intent, profile });
+      const data = {
+        token: 'mock-token-123',
+        user: {
+          id: 'mock-user-1',
+          email,
+          profile: {
+            ...(profile || {}),
+            resume: null,
+          },
+        },
+      };
       setToken(data.token);
       setUser(data.user);
       return data;
