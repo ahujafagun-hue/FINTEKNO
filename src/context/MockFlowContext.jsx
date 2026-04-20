@@ -15,6 +15,21 @@ export function MockFlowProvider({ children }) {
   const [pendingApprovals, setPendingApprovals] = useState(3);
   const [savedJobs, setSavedJobs] = useState({ growwDataAnalyst: false });
   const [savedDrafts, setSavedDrafts] = useState({ growwApplyForm: false });
+  const [applyFormDraft, setApplyFormDraft] = useState({
+    formFields: {
+      fullName: 'Aryan Rathi',
+      email: 'aryan.rathi@email.com',
+      phone: '+91 98765 43210',
+      city: 'New Delhi',
+      education: 'B.Tech DTU · 2025 · 8.2 CGPA',
+      experience: 'Fresher (0–1 yr)',
+      resume: 'Aryan_Resume_Groww_Tailored.pdf · 91% ATS',
+      coverLetter:
+        "I'm a final-year B.Tech student at DTU with strong skills in Python, SQL, and data visualisation. I've built dashboards during my internship at XYZ Corp. I'm excited by Groww's data-driven approach...",
+    },
+    essayAnswer:
+      "I've been a Groww user for 2 years and I'm passionate about making financial tools accessible. The Growth team's focus on funnel analytics aligns directly with the work I want to do...",
+  });
   const [lastAction, setLastAction] = useState('');
 
   const connectedCount = Object.values(connectedPlatforms).filter(Boolean).length;
@@ -59,6 +74,12 @@ export function MockFlowProvider({ children }) {
     });
   };
 
+  const saveApplyFormDraft = ({ formFields, essayAnswer }) => {
+    setApplyFormDraft({ formFields, essayAnswer });
+    setSavedDrafts((prev) => ({ ...prev, growwApplyForm: true }));
+    setLastAction('Apply form changes saved');
+  };
+
   const value = useMemo(
     () => ({
       connectedPlatforms,
@@ -69,6 +90,7 @@ export function MockFlowProvider({ children }) {
       pendingApprovals,
       savedJobs,
       savedDrafts,
+      applyFormDraft,
       lastAction,
       connectPlatform,
       clearUrgentInbox,
@@ -76,8 +98,9 @@ export function MockFlowProvider({ children }) {
       markAction,
       toggleSavedJob,
       toggleSavedDraft,
+      saveApplyFormDraft,
     }),
-    [connectedPlatforms, connectedCount, urgentInboxCount, applicationsTotal, appliedStageCount, pendingApprovals, savedJobs, savedDrafts, lastAction],
+    [connectedPlatforms, connectedCount, urgentInboxCount, applicationsTotal, appliedStageCount, pendingApprovals, savedJobs, savedDrafts, applyFormDraft, lastAction],
   );
 
   return <MockFlowContext.Provider value={value}>{children}</MockFlowContext.Provider>;

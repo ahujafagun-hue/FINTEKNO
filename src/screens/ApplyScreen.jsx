@@ -6,22 +6,10 @@ import { useState } from 'react';
 
 export default function ApplyScreen() {
   const { switchTab } = useTab();
-  const { pendingApprovals, submitApplication, savedDrafts, toggleSavedDraft, markAction } = useMockFlow();
-  const [formFields, setFormFields] = useState({
-    fullName: 'Aryan Rathi',
-    email: 'aryan.rathi@email.com',
-    phone: '+91 98765 43210',
-    city: 'New Delhi',
-    education: 'B.Tech DTU · 2025 · 8.2 CGPA',
-    experience: 'Fresher (0–1 yr)',
-    resume: 'Aryan_Resume_Groww_Tailored.pdf · 91% ATS',
-    coverLetter:
-      "I'm a final-year B.Tech student at DTU with strong skills in Python, SQL, and data visualisation. I've built dashboards during my internship at XYZ Corp. I'm excited by Groww's data-driven approach...",
-  });
+  const { pendingApprovals, submitApplication, savedDrafts, toggleSavedDraft, markAction, applyFormDraft, saveApplyFormDraft } = useMockFlow();
+  const [formFields, setFormFields] = useState(applyFormDraft.formFields);
   const [isEditingEssay, setIsEditingEssay] = useState(false);
-  const [essayAnswer, setEssayAnswer] = useState(
-    "I've been a Groww user for 2 years and I'm passionate about making financial tools accessible. The Growth team's focus on funnel analytics aligns directly with the work I want to do...",
-  );
+  const [essayAnswer, setEssayAnswer] = useState(applyFormDraft.essayAnswer);
 
   const onFieldChange = (field) => (e) => {
     const val = e.target.value;
@@ -247,6 +235,14 @@ export default function ApplyScreen() {
                 </div>
                 <button
                   type="button"
+                  className="btn-solid"
+                  style={{ width: '100%', padding: 10, fontSize: 11, marginBottom: 8 }}
+                  onClick={() => saveApplyFormDraft({ formFields, essayAnswer })}
+                >
+                  Save form changes
+                </button>
+                <button
+                  type="button"
                   className="btn-green"
                   style={{ width: '100%', padding: 11, fontSize: 11, marginBottom: 8 }}
                   onClick={() => {
@@ -260,7 +256,10 @@ export default function ApplyScreen() {
                   type="button"
                   className="btn-ghost-sm"
                   style={{ width: '100%', padding: 9, fontSize: 11 }}
-                  onClick={() => toggleSavedDraft('growwApplyForm')}
+                  onClick={() => {
+                    saveApplyFormDraft({ formFields, essayAnswer });
+                    toggleSavedDraft('growwApplyForm');
+                  }}
                 >
                   {savedDrafts.growwApplyForm ? 'Saved for later' : 'Save & finish later'}
                 </button>
