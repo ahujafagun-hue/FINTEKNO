@@ -1,9 +1,11 @@
 import BrowserChrome from '../components/BrowserChrome';
 import SidebarLogo from '../components/SidebarLogo';
 import { useTab } from '../context/TabContext';
+import { useMockFlow } from '../context/MockFlowContext';
 
 export default function JobDetail() {
   const { switchTab } = useTab();
+  const { savedJobs, toggleSavedJob } = useMockFlow();
 
   return (
     <>
@@ -56,8 +58,8 @@ export default function JobDetail() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" className="btn-ghost-sm">
-                Save
+              <button type="button" className="btn-ghost-sm" onClick={() => toggleSavedJob('growwDataAnalyst')}>
+                {savedJobs.growwDataAnalyst ? 'Saved' : 'Save'}
               </button>
               <button type="button" className="btn-green" style={{ padding: '7px 16px', fontSize: 11 }} onClick={() => switchTab('apply')}>
                 Apply with FINTEKNO AI →
@@ -192,8 +194,8 @@ export default function JobDetail() {
                     <button type="button" className="btn-green" style={{ width: '100%', padding: 10, fontSize: 11 }} onClick={() => switchTab('apply')}>
                       Review & submit →
                     </button>
-                    <button type="button" className="btn-ghost-sm" style={{ width: '100%', padding: 9 }}>
-                      Save for later
+                    <button type="button" className="btn-ghost-sm" style={{ width: '100%', padding: 9 }} onClick={() => toggleSavedJob('growwDataAnalyst')}>
+                      {savedJobs.growwDataAnalyst ? 'Saved for later' : 'Save for later'}
                     </button>
                   </div>
                 </div>

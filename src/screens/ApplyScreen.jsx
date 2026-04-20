@@ -2,10 +2,15 @@ import BrowserChrome from '../components/BrowserChrome';
 import SidebarLogo from '../components/SidebarLogo';
 import { useTab } from '../context/TabContext';
 import { useMockFlow } from '../context/MockFlowContext';
+import { useState } from 'react';
 
 export default function ApplyScreen() {
   const { switchTab } = useTab();
-  const { pendingApprovals, submitApplication } = useMockFlow();
+  const { pendingApprovals, submitApplication, savedDrafts, toggleSavedDraft, markAction } = useMockFlow();
+  const [isEditingEssay, setIsEditingEssay] = useState(false);
+  const [essayAnswer, setEssayAnswer] = useState(
+    "I've been a Groww user for 2 years and I'm passionate about making financial tools accessible. The Growth team's focus on funnel analytics aligns directly with the work I want to do...",
+  );
 
   return (
     <>
@@ -137,13 +142,41 @@ export default function ApplyScreen() {
                       </div>
                       <div className="ff-needs">
                         <strong style={{ display: 'block', marginBottom: 5, fontSize: 12 }}>This open question needs your personal answer.</strong>
-                        <em style={{ fontStyle: 'italic', fontSize: 11 }}>
-                          &quot;I&apos;ve been a Groww user for 2 years and I&apos;m passionate about making financial tools accessible. The Growth team&apos;s focus on funnel analytics aligns directly with the work I want to do...&quot;
-                        </em>
-                        <br />
-                        <button type="button" className="btn-solid" style={{ marginTop: 8, padding: '5px 12px', fontSize: 10 }}>
-                          Edit this answer
-                        </button>
+                        {isEditingEssay ? (
+                          <>
+                            <textarea
+                              className="form-input"
+                              rows={4}
+                              value={essayAnswer}
+                              onChange={(e) => setEssayAnswer(e.target.value)}
+                              style={{ marginBottom: 8, resize: 'vertical' }}
+                            />
+                            <div style={{ display: 'flex', gap: 8 }}>
+                              <button
+                                type="button"
+                                className="btn-solid"
+                                style={{ padding: '5px 12px', fontSize: 10 }}
+                                onClick={() => {
+                                  setIsEditingEssay(false);
+                                  markAction('Essay answer saved');
+                                }}
+                              >
+                                Save answer
+                              </button>
+                              <button type="button" className="btn-ghost-sm" style={{ padding: '5px 12px', fontSize: 10 }} onClick={() => setIsEditingEssay(false)}>
+                                Cancel
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <em style={{ fontStyle: 'italic', fontSize: 11 }}>&quot;{essayAnswer}&quot;</em>
+                            <br />
+                            <button type="button" className="btn-solid" style={{ marginTop: 8, padding: '5px 12px', fontSize: 10 }} onClick={() => setIsEditingEssay(true)}>
+                              Edit this answer
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -209,8 +242,13 @@ export default function ApplyScreen() {
                 >
                   Submit application
                 </button>
-                <button type="button" className="btn-ghost-sm" style={{ width: '100%', padding: 9, fontSize: 11 }}>
-                  Save & finish later
+                <button
+                  type="button"
+                  className="btn-ghost-sm"
+                  style={{ width: '100%', padding: 9, fontSize: 11 }}
+                  onClick={() => toggleSavedDraft('growwApplyForm')}
+                >
+                  {savedDrafts.growwApplyForm ? 'Saved for later' : 'Save & finish later'}
                 </button>
               </div>
             </div>

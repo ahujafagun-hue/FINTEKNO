@@ -13,6 +13,8 @@ export function MockFlowProvider({ children }) {
   const [applicationsTotal, setApplicationsTotal] = useState(38);
   const [appliedStageCount, setAppliedStageCount] = useState(22);
   const [pendingApprovals, setPendingApprovals] = useState(3);
+  const [savedJobs, setSavedJobs] = useState({ growwDataAnalyst: false });
+  const [savedDrafts, setSavedDrafts] = useState({ growwApplyForm: false });
   const [lastAction, setLastAction] = useState('');
 
   const connectedCount = Object.values(connectedPlatforms).filter(Boolean).length;
@@ -41,6 +43,22 @@ export function MockFlowProvider({ children }) {
     setLastAction(label);
   };
 
+  const toggleSavedJob = (jobKey) => {
+    setSavedJobs((prev) => {
+      const nextVal = !prev[jobKey];
+      setLastAction(nextVal ? 'Job saved' : 'Job unsaved');
+      return { ...prev, [jobKey]: nextVal };
+    });
+  };
+
+  const toggleSavedDraft = (draftKey) => {
+    setSavedDrafts((prev) => {
+      const nextVal = !prev[draftKey];
+      setLastAction(nextVal ? 'Draft saved for later' : 'Draft resumed');
+      return { ...prev, [draftKey]: nextVal };
+    });
+  };
+
   const value = useMemo(
     () => ({
       connectedPlatforms,
@@ -49,13 +67,17 @@ export function MockFlowProvider({ children }) {
       applicationsTotal,
       appliedStageCount,
       pendingApprovals,
+      savedJobs,
+      savedDrafts,
       lastAction,
       connectPlatform,
       clearUrgentInbox,
       submitApplication,
       markAction,
+      toggleSavedJob,
+      toggleSavedDraft,
     }),
-    [connectedPlatforms, connectedCount, urgentInboxCount, applicationsTotal, appliedStageCount, pendingApprovals, lastAction],
+    [connectedPlatforms, connectedCount, urgentInboxCount, applicationsTotal, appliedStageCount, pendingApprovals, savedJobs, savedDrafts, lastAction],
   );
 
   return <MockFlowContext.Provider value={value}>{children}</MockFlowContext.Provider>;
