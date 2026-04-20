@@ -7,10 +7,26 @@ import { useState } from 'react';
 export default function ApplyScreen() {
   const { switchTab } = useTab();
   const { pendingApprovals, submitApplication, savedDrafts, toggleSavedDraft, markAction } = useMockFlow();
+  const [formFields, setFormFields] = useState({
+    fullName: 'Aryan Rathi',
+    email: 'aryan.rathi@email.com',
+    phone: '+91 98765 43210',
+    city: 'New Delhi',
+    education: 'B.Tech DTU · 2025 · 8.2 CGPA',
+    experience: 'Fresher (0–1 yr)',
+    resume: 'Aryan_Resume_Groww_Tailored.pdf · 91% ATS',
+    coverLetter:
+      "I'm a final-year B.Tech student at DTU with strong skills in Python, SQL, and data visualisation. I've built dashboards during my internship at XYZ Corp. I'm excited by Groww's data-driven approach...",
+  });
   const [isEditingEssay, setIsEditingEssay] = useState(false);
   const [essayAnswer, setEssayAnswer] = useState(
     "I've been a Groww user for 2 years and I'm passionate about making financial tools accessible. The Growth team's focus on funnel analytics aligns directly with the work I want to do...",
   );
+
+  const onFieldChange = (field) => (e) => {
+    const val = e.target.value;
+    setFormFields((prev) => ({ ...prev, [field]: val }));
+  };
 
   return (
     <>
@@ -89,52 +105,50 @@ export default function ApplyScreen() {
                         <div className="ff-label">
                           Full name <span className="badge-auto">auto</span>
                         </div>
-                        <div className="ff-val">Aryan Rathi</div>
+                        <input className="form-input" value={formFields.fullName} onChange={onFieldChange('fullName')} />
                       </div>
                       <div>
                         <div className="ff-label">
                           Email <span className="badge-auto">auto</span>
                         </div>
-                        <div className="ff-val">aryan.rathi@email.com</div>
+                        <input className="form-input" value={formFields.email} onChange={onFieldChange('email')} />
                       </div>
                       <div>
                         <div className="ff-label">
                           Phone <span className="badge-auto">auto</span>
                         </div>
-                        <div className="ff-val">+91 98765 43210</div>
+                        <input className="form-input" value={formFields.phone} onChange={onFieldChange('phone')} />
                       </div>
                       <div>
                         <div className="ff-label">
                           City <span className="badge-auto">auto</span>
                         </div>
-                        <div className="ff-val">New Delhi</div>
+                        <input className="form-input" value={formFields.city} onChange={onFieldChange('city')} />
                       </div>
                       <div>
                         <div className="ff-label">
                           Education <span className="badge-auto">auto</span>
                         </div>
-                        <div className="ff-val">B.Tech DTU · 2025 · 8.2 CGPA</div>
+                        <input className="form-input" value={formFields.education} onChange={onFieldChange('education')} />
                       </div>
                       <div>
                         <div className="ff-label">
                           Experience <span className="badge-auto">auto</span>
                         </div>
-                        <div className="ff-val">Fresher (0–1 yr)</div>
+                        <input className="form-input" value={formFields.experience} onChange={onFieldChange('experience')} />
                       </div>
                     </div>
                     <div>
                       <div className="ff-label">
                         Resume <span className="badge-auto">auto</span>
                       </div>
-                      <div className="ff-val">Aryan_Resume_Groww_Tailored.pdf · 91% ATS</div>
+                      <input className="form-input" value={formFields.resume} onChange={onFieldChange('resume')} />
                     </div>
                     <div>
                       <div className="ff-label">
                         Cover letter <span className="badge-auto">auto</span>
                       </div>
-                      <div className="ff-val" style={{ fontSize: 11, lineHeight: 1.7 }}>
-                        I&apos;m a final-year B.Tech student at DTU with strong skills in Python, SQL, and data visualisation. I&apos;ve built dashboards during my internship at XYZ Corp. I&apos;m excited by Groww&apos;s data-driven approach...
-                      </div>
+                      <textarea className="form-input" rows={3} value={formFields.coverLetter} onChange={onFieldChange('coverLetter')} style={{ resize: 'vertical' }} />
                     </div>
                     <div>
                       <div className="ff-label">
