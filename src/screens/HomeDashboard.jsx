@@ -1,9 +1,11 @@
 import BrowserChrome from '../components/BrowserChrome';
 import SidebarLogo from '../components/SidebarLogo';
 import { useTab } from '../context/TabContext';
+import { useMockFlow } from '../context/MockFlowContext';
 
 export default function HomeDashboard() {
   const { switchTab } = useTab();
+  const { applicationsTotal, pendingApprovals, urgentInboxCount } = useMockFlow();
 
   return (
     <>
@@ -19,13 +21,13 @@ export default function HomeDashboard() {
             Jobs <span className="nav-badge" aria-label="12 new">12</span>
           </div>
           <div className="nav-item" onClick={() => switchTab('apply')} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && switchTab('apply')}>
-            Apply <span className="nav-badge" aria-label="3 pending">3</span>
+            Apply <span className="nav-badge" aria-label={`${pendingApprovals} pending`}>{pendingApprovals}</span>
           </div>
           <div className="nav-item" onClick={() => switchTab('tracker')} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && switchTab('tracker')}>
             Tracker
           </div>
           <div className="nav-item" onClick={() => switchTab('inbox')} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && switchTab('inbox')}>
-            Inbox <span className="nav-badge nav-badge-amber" aria-label="1 urgent">1</span>
+            Inbox <span className="nav-badge nav-badge-amber" aria-label={`${urgentInboxCount} urgent`}>{urgentInboxCount}</span>
           </div>
           <div className="nav-grp">Agents</div>
           <div className="nav-item" onClick={() => switchTab('activity')} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && switchTab('activity')}>
@@ -71,22 +73,22 @@ export default function HomeDashboard() {
                 <div className="kpi-delta delta-up">↑ +4 vs yesterday</div>
               </div>
               <div className="kpi-card" role="listitem">
-                <div className="kpi-val" style={{ color: 'var(--green)' }} aria-label="38 applications">
-                  38
+                <div className="kpi-val" style={{ color: 'var(--green)' }} aria-label={`${applicationsTotal} applications`}>
+                  {applicationsTotal}
                 </div>
                 <div className="kpi-lbl">Total applications</div>
                 <div className="kpi-delta delta-up">↑ +6 this week</div>
               </div>
               <div className="kpi-card" role="listitem">
-                <div className="kpi-val" style={{ color: 'var(--amber)' }} aria-label="3 awaiting approval">
-                  3
+                <div className="kpi-val" style={{ color: 'var(--amber)' }} aria-label={`${pendingApprovals} awaiting approval`}>
+                  {pendingApprovals}
                 </div>
                 <div className="kpi-lbl">Awaiting approval</div>
                 <div className="kpi-delta delta-warn">Action needed</div>
               </div>
               <div className="kpi-card" role="listitem">
-                <div className="kpi-val" style={{ color: 'var(--red)' }} aria-label="1 urgent message">
-                  1
+                <div className="kpi-val" style={{ color: 'var(--red)' }} aria-label={`${urgentInboxCount} urgent message`}>
+                  {urgentInboxCount}
                 </div>
                 <div className="kpi-lbl">Urgent message</div>
                 <div className="kpi-delta delta-red">Respond today</div>

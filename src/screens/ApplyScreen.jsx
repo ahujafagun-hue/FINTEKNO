@@ -1,9 +1,11 @@
 import BrowserChrome from '../components/BrowserChrome';
 import SidebarLogo from '../components/SidebarLogo';
 import { useTab } from '../context/TabContext';
+import { useMockFlow } from '../context/MockFlowContext';
 
 export default function ApplyScreen() {
   const { switchTab } = useTab();
+  const { pendingApprovals, submitApplication } = useMockFlow();
 
   return (
     <>
@@ -19,7 +21,7 @@ export default function ApplyScreen() {
             Jobs <span className="nav-badge">12</span>
           </div>
           <div className="nav-item active" aria-current="page">
-            Apply <span className="nav-badge">3</span>
+            Apply <span className="nav-badge">{pendingApprovals}</span>
           </div>
           <div className="nav-item" onClick={() => switchTab('tracker')} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && switchTab('tracker')}>
             Tracker
@@ -50,7 +52,7 @@ export default function ApplyScreen() {
               <div className="app-title">Review & submit — Groww</div>
               <div className="app-sub">Apply Agent pre-filled 10 of 11 fields · 1 needs your input</div>
             </div>
-            <span className="chip chip-amber">1 item needs input</span>
+            <span className="chip chip-amber">{pendingApprovals > 0 ? '1 item needs input' : 'All forms reviewed'}</span>
           </div>
           <div className="app-body">
             <div className="split">
@@ -196,7 +198,15 @@ export default function ApplyScreen() {
                     <div>→ ATS feedback stored for future roles</div>
                   </div>
                 </div>
-                <button type="button" className="btn-green" style={{ width: '100%', padding: 11, fontSize: 11, marginBottom: 8 }} onClick={() => switchTab('tracker')}>
+                <button
+                  type="button"
+                  className="btn-green"
+                  style={{ width: '100%', padding: 11, fontSize: 11, marginBottom: 8 }}
+                  onClick={() => {
+                    submitApplication();
+                    switchTab('tracker');
+                  }}
+                >
                   Submit application
                 </button>
                 <button type="button" className="btn-ghost-sm" style={{ width: '100%', padding: 9, fontSize: 11 }}>

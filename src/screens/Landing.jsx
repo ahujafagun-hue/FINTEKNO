@@ -6,7 +6,7 @@ import { useHeroParallax } from '../hooks/useHeroParallax';
 import { useLandingSectionAnimations } from '../hooks/useLandingSectionAnimations';
 
 export default function Landing() {
-  const { switchTab, tab, setAuthIntent } = useTab();
+  const { switchTab, tab } = useTab();
   const heroRef = useRef(null);
   const orbRef = useRef(null);
   const gridRef = useRef(null);
@@ -51,24 +51,10 @@ export default function Landing() {
             </li>
           </ul>
           <div className="nav-cta">
-            <button
-              type="button"
-              className="btn-outline"
-              onClick={() => {
-                setAuthIntent('login');
-                switchTab('onboard1');
-              }}
-            >
+            <button type="button" className="btn-outline" onClick={() => switchTab('onboard1')}>
               Sign in
             </button>
-            <button
-              type="button"
-              className="btn-solid"
-              onClick={() => {
-                setAuthIntent('register');
-                switchTab('onboard1');
-              }}
-            >
+            <button type="button" className="btn-solid" onClick={() => switchTab('onboard1')}>
               Get started →
             </button>
           </div>
@@ -103,10 +89,7 @@ export default function Landing() {
               type="button"
               className="btn-solid"
               style={{ padding: '12px 28px', fontSize: '13px' }}
-              onClick={() => {
-                setAuthIntent('register');
-                switchTab('onboard1');
-              }}
+              onClick={() => switchTab('onboard1')}
               aria-label="Start your free job search"
             >
               Start free job search →
@@ -687,14 +670,7 @@ export default function Landing() {
                   Application tracker
                 </div>
               </div>
-              <button
-                type="button"
-                className="price-cta"
-                onClick={() => {
-                  setAuthIntent('register');
-                  switchTab('onboard1');
-                }}
-              >
+              <button type="button" className="price-cta" onClick={() => switchTab('onboard1')}>
                 Get started free
               </button>
             </article>
@@ -746,14 +722,7 @@ export default function Landing() {
                   Naukri + Indeed priority
                 </div>
               </div>
-              <button
-                type="button"
-                className="price-cta"
-                onClick={() => {
-                  setAuthIntent('register');
-                  switchTab('onboard1');
-                }}
-              >
+              <button type="button" className="price-cta" onClick={() => switchTab('onboard1')}>
                 Start Pro — 7 days free
               </button>
             </article>

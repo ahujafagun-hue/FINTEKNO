@@ -1,9 +1,11 @@
 import BrowserChrome from '../components/BrowserChrome';
 import SidebarLogo from '../components/SidebarLogo';
 import { useTab } from '../context/TabContext';
+import { useMockFlow } from '../context/MockFlowContext';
 
 export default function TrackerScreen() {
   const { switchTab } = useTab();
+  const { applicationsTotal, appliedStageCount, pendingApprovals } = useMockFlow();
 
   return (
     <>
@@ -19,7 +21,7 @@ export default function TrackerScreen() {
             Jobs <span className="nav-badge">12</span>
           </div>
           <div className="nav-item" onClick={() => switchTab('apply')} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && switchTab('apply')}>
-            Apply <span className="nav-badge">3</span>
+            Apply <span className="nav-badge">{pendingApprovals}</span>
           </div>
           <div className="nav-item active" aria-current="page">
             Tracker
@@ -48,7 +50,7 @@ export default function TrackerScreen() {
           <div className="app-header">
             <div>
               <div className="app-title">Application pipeline</div>
-              <div className="app-sub">38 total · 8 active · 2 interviews</div>
+              <div className="app-sub">{applicationsTotal} total · 8 active · 2 interviews</div>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button type="button" className="btn-ghost-sm">
@@ -63,7 +65,7 @@ export default function TrackerScreen() {
             <div className="pipe-grid" role="list" aria-label="Application stages">
               <div className="pipe-col" role="listitem">
                 <div className="pipe-col-hdr">
-                  Applied <span className="pipe-cnt">22</span>
+                  Applied <span className="pipe-cnt">{appliedStageCount}</span>
                 </div>
                 <div className="pipe-card">
                   <div className="pipe-card-title">Data Analyst</div>

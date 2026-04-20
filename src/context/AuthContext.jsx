@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import * as authApi from '../api/authApi';
 
 const TOKEN_KEY = 'fintekno_token';
 
@@ -6,18 +7,8 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(() => localStorage.getItem(TOKEN_KEY));
-  const [user, setUser] = useState(() => {
-    const t = localStorage.getItem(TOKEN_KEY);
-    if (!t) return null;
-    return {
-      id: 'mock-user-1',
-      email: 'aryan.rathi@email.com',
-      profile: {
-        resume: null,
-      },
-    };
-  });
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(!!localStorage.getItem(TOKEN_KEY));
 
   const setToken = useCallback((t) => {
     setTokenState(t);
@@ -32,34 +23,28 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    setUser((prev) => prev || { id: 'mock-user-1', email: 'aryan.rathi@email.com', profile: { resume: null } });
-    setLoading(false);
+    try {
+      const { user: u } = await authApi.fetchMe(t);
+      setUser(u);
+    } catch {
+      setToken(null);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }, [setToken]);
 
+  useEffect(() => {
+    loadMe();
+  }, [loadMe]);
+
   const requestOtp = useCallback(async (email, intent) => {
-    return {
-      ok: true,
-      dev: true,
-      message: 'Mock OTP sent',
-      code: '123456',
-      email,
-      intent,
-    };
+    return authApi.requestOtp({ email, intent });
   }, []);
 
   const verifyOtp = useCallback(
     async (email, code, intent, profile) => {
-      const data = {
-        token: 'mock-token-123',
-        user: {
-          id: 'mock-user-1',
-          email,
-          profile: {
-            ...(profile || {}),
-            resume: null,
-          },
-        },
-      };
+      const data = await authApi.verifyOtp({ email, code, intent, profile });
       setToken(data.token);
       setUser(data.user);
       return data;

@@ -1,9 +1,11 @@
 import BrowserChrome from '../components/BrowserChrome';
 import SidebarLogo from '../components/SidebarLogo';
 import { useTab } from '../context/TabContext';
+import { useMockFlow } from '../context/MockFlowContext';
 
 export default function InboxScreen() {
   const { switchTab } = useTab();
+  const { urgentInboxCount, clearUrgentInbox } = useMockFlow();
 
   return (
     <>
@@ -25,7 +27,7 @@ export default function InboxScreen() {
             Tracker
           </div>
           <div className="nav-item active" aria-current="page">
-            Inbox <span className="nav-badge nav-badge-amber">1</span>
+            Inbox <span className="nav-badge nav-badge-amber">{urgentInboxCount}</span>
           </div>
           <div className="nav-grp">Agents</div>
           <div className="nav-item" onClick={() => switchTab('activity')} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && switchTab('activity')}>
@@ -48,7 +50,7 @@ export default function InboxScreen() {
           <div className="app-header">
             <div>
               <div className="app-title">Recruiter inbox</div>
-              <div className="app-sub">Comms agent · read-only Gmail · 1 urgent</div>
+              <div className="app-sub">Comms agent · read-only Gmail · {urgentInboxCount} urgent</div>
             </div>
             <span className="chip chip-green" style={{ padding: '7px 12px' }}>
               Comms: Active
@@ -81,9 +83,15 @@ export default function InboxScreen() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: 10, color: 'var(--text3)', fontFamily: "'Space Mono',monospace" }}>Today 9:41 AM</div>
-                  <span className="chip chip-red" style={{ marginTop: 5, fontSize: 9 }}>
-                    Urgent
-                  </span>
+                  {urgentInboxCount > 0 ? (
+                    <span className="chip chip-red" style={{ marginTop: 5, fontSize: 9 }}>
+                      Urgent
+                    </span>
+                  ) : (
+                    <span className="chip chip-green" style={{ marginTop: 5, fontSize: 9 }}>
+                      Replied
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="email-body">
@@ -122,13 +130,13 @@ export default function InboxScreen() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8, padding: '8px 16px 14px' }}>
-                <button type="button" className="btn-solid" style={{ padding: '6px 14px', fontSize: 10 }}>
+                <button type="button" className="btn-solid" style={{ padding: '6px 14px', fontSize: 10 }} onClick={() => clearUrgentInbox('Reply sent to recruiter')}>
                   Send this reply
                 </button>
                 <button type="button" className="btn-ghost-sm">
                   Edit first
                 </button>
-                <button type="button" className="btn-ghost-sm">
+                <button type="button" className="btn-ghost-sm" onClick={() => clearUrgentInbox('Urgent email dismissed')}>
                   Dismiss
                 </button>
               </div>

@@ -1,4 +1,4 @@
-import { AuthProvider } from './context/AuthContext';
+import { useEffect, useRef, useState } from 'react';
 import { useTab, TabProvider } from './context/TabContext';
 import TabNav from './components/TabNav';
 import Landing from './screens/Landing';
@@ -12,6 +12,7 @@ import TrackerScreen from './screens/TrackerScreen';
 import InboxScreen from './screens/InboxScreen';
 import ActivityScreen from './screens/ActivityScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import { MockFlowProvider, useMockFlow } from './context/MockFlowContext';
 import './fintekno.css';
 
 function Screens() {
@@ -60,12 +61,76 @@ function Screens() {
 
 export default function App() {
   return (
+    <MockFlowProvider>
+      <AppBody />
+    </MockFlowProvider>
+  );
+}
+
+function AppBody() {
+  const { markAction, lastAction } = useMockFlow();
+  const [mockMessage, setMockMessage] = useState('');
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    const onGlobalButtonClick = (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const label = (btn.textContent || 'Action').trim().split(/\s+/).join(' ').slice(0, 80);
+      setMockMessage(`${label} (mock)`);
+      markAction(label);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => setMockMessage(''), 1400);
+    };
+
+    document.addEventListener('click', onGlobalButtonClick);
+    return () => {
+      document.removeEventListener('click', onGlobalButtonClick);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  return (
     <TabProvider>
-      <AuthProvider>
-        <h1 className="sr-only">FINTEKNO AI — AI Job Agents for Indian Freshers and Students</h1>
-        <TabNav />
-        <Screens />
-      </AuthProvider>
+      <h1 className="sr-only">FINTEKNO AI — AI Job Agents for Indian Freshers and Students</h1>
+      <TabNav />
+      <Screens />
+      {lastAction ? (
+        <div
+          style={{
+            position: 'fixed',
+            left: 16,
+            bottom: 16,
+            zIndex: 9999,
+            background: 'var(--bg2)',
+            border: '1px solid var(--border2)',
+            color: 'var(--green)',
+            padding: '8px 12px',
+            fontSize: 11,
+            fontFamily: "'Space Mono',monospace",
+          }}
+        >
+          Flow: {lastAction}
+        </div>
+      ) : null}
+      {mockMessage ? (
+        <div
+          style={{
+            position: 'fixed',
+            right: 16,
+            bottom: 16,
+            zIndex: 9999,
+            background: 'var(--bg2)',
+            border: '1px solid var(--border2)',
+            color: 'var(--text2)',
+            padding: '8px 12px',
+            fontSize: 11,
+            fontFamily: "'Space Mono',monospace",
+          }}
+        >
+          {mockMessage}
+        </div>
+      ) : null}
     </TabProvider>
   );
 }

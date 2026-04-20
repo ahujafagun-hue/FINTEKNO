@@ -4,8 +4,6 @@ const TabContext = createContext(null);
 
 export function TabProvider({ children }) {
   const [tab, setTab] = useState('landing');
-  /** 'login' = Sign in from landing; 'register' = Get started / pricing CTAs */
-  const [authIntent, setAuthIntent] = useState(null);
 
   const switchTab = useCallback((id) => {
     setTab(id);
@@ -14,10 +12,7 @@ export function TabProvider({ children }) {
     });
   }, []);
 
-  const value = useMemo(
-    () => ({ tab, switchTab, authIntent, setAuthIntent }),
-    [tab, switchTab, authIntent],
-  );
+  const value = useMemo(() => ({ tab, switchTab }), [tab, switchTab]);
 
   return <TabContext.Provider value={value}>{children}</TabContext.Provider>;
 }

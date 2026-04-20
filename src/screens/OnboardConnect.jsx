@@ -1,21 +1,10 @@
-import { useState } from 'react';
 import BrowserChrome from '../components/BrowserChrome';
 import { useTab } from '../context/TabContext';
+import { useMockFlow } from '../context/MockFlowContext';
 
 export default function OnboardConnect() {
   const { switchTab } = useTab();
-  const [status] = useState({
-    connectedCount: 2,
-    linkedin: { connected: true },
-    google: { connected: true },
-    naukri: { connected: false, message: 'Not available via OAuth yet.' },
-    indeed: { connected: false, message: 'Not available via OAuth yet.' },
-  });
-  const [hint, setHint] = useState('');
-  const s = status;
-  const li = s?.linkedin?.connected;
-  const gm = s?.google?.connected;
-  const connectedCount = s?.connectedCount ?? 0;
+  const { connectedPlatforms, connectedCount, connectPlatform } = useMockFlow();
 
   return (
     <>
@@ -49,12 +38,7 @@ export default function OnboardConnect() {
         <div className="ob-right">
           <div className="ob-form-title">Connect platforms</div>
           <p className="ob-form-sub">Connect once. Agents handle everything from here.</p>
-
-          {hint ? (
-            <p style={{ fontSize: 12, color: 'var(--amber)', marginBottom: 10 }}>{hint}</p>
-          ) : null}
-
-          <div className={li ? 'connect-card done' : 'connect-card'} aria-label="LinkedIn">
+          <div className="connect-card done" aria-label="LinkedIn connected">
             <div
               style={{
                 width: 34,
@@ -76,22 +60,13 @@ export default function OnboardConnect() {
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>LinkedIn</div>
-              <div style={{ fontSize: 11, color: 'var(--green)', fontFamily: "'Space Mono',monospace" }}>
-                {li ? 'Connected · Easy Apply enabled' : 'OAuth — connect your account'}
-              </div>
+              <div style={{ fontSize: 11, color: 'var(--green)', fontFamily: "'Space Mono',monospace" }}>Connected · Easy Apply enabled</div>
             </div>
-            {li ? (
-              <div style={{ color: 'var(--green)', fontFamily: "'Space Mono',monospace", fontWeight: 700 }} aria-hidden="true">
-                ✓
-              </div>
-            ) : (
-              <button type="button" className="btn-ghost-sm" onClick={() => setHint('LinkedIn connected in mock mode')}>
-                Connect
-              </button>
-            )}
+            <div style={{ color: 'var(--green)', fontFamily: "'Space Mono',monospace", fontWeight: 700 }} aria-hidden="true">
+              ✓
+            </div>
           </div>
-
-          <div className={gm ? 'connect-card done' : 'connect-card'} aria-label="Gmail">
+          <div className="connect-card done" aria-label="Gmail connected">
             <div
               style={{
                 width: 34,
@@ -113,22 +88,13 @@ export default function OnboardConnect() {
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>Gmail</div>
-              <div style={{ fontSize: 11, color: 'var(--green)', fontFamily: "'Space Mono',monospace" }}>
-                {gm ? 'Connected · Read-only · Comms active' : 'OAuth — Gmail read-only scope'}
-              </div>
+              <div style={{ fontSize: 11, color: 'var(--green)', fontFamily: "'Space Mono',monospace" }}>Connected · Read-only · Comms active</div>
             </div>
-            {gm ? (
-              <div style={{ color: 'var(--green)', fontFamily: "'Space Mono',monospace", fontWeight: 700 }} aria-hidden="true">
-                ✓
-              </div>
-            ) : (
-              <button type="button" className="btn-ghost-sm" onClick={() => setHint('Gmail connected in mock mode')}>
-                Connect
-              </button>
-            )}
+            <div style={{ color: 'var(--green)', fontFamily: "'Space Mono',monospace", fontWeight: 700 }} aria-hidden="true">
+              ✓
+            </div>
           </div>
-
-          <div className="connect-card" aria-label="Naukri">
+          <div className={`connect-card${connectedPlatforms.naukri ? ' done' : ''}`} aria-label="Naukri not connected">
             <div
               style={{
                 width: 34,
@@ -151,16 +117,17 @@ export default function OnboardConnect() {
               <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>Naukri.com</div>
               <div style={{ fontSize: 11, color: 'var(--text3)' }}>Apply to 70M+ India listings</div>
             </div>
-            <button
-              type="button"
-              className="btn-ghost-sm"
-              onClick={() => setHint(s?.naukri?.message || 'Not available via OAuth yet.')}
-            >
-              Info
-            </button>
+            {connectedPlatforms.naukri ? (
+              <div style={{ color: 'var(--green)', fontFamily: "'Space Mono',monospace", fontWeight: 700 }} aria-hidden="true">
+                ✓
+              </div>
+            ) : (
+              <button type="button" className="btn-ghost-sm" onClick={() => connectPlatform('naukri')}>
+                Connect
+              </button>
+            )}
           </div>
-
-          <div className="connect-card" aria-label="Indeed India">
+          <div className={`connect-card${connectedPlatforms.indeed ? ' done' : ''}`} aria-label="Indeed India not connected">
             <div
               style={{
                 width: 34,
@@ -183,31 +150,23 @@ export default function OnboardConnect() {
               <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>Indeed India</div>
               <div style={{ fontSize: 11, color: 'var(--text3)' }}>Access 50,000+ active postings</div>
             </div>
-            <button
-              type="button"
-              className="btn-ghost-sm"
-              onClick={() => setHint(s?.indeed?.message || 'Not available via OAuth yet.')}
-            >
-              Info
-            </button>
+            {connectedPlatforms.indeed ? (
+              <div style={{ color: 'var(--green)', fontFamily: "'Space Mono',monospace", fontWeight: 700 }} aria-hidden="true">
+                ✓
+              </div>
+            ) : (
+              <button type="button" className="btn-ghost-sm" onClick={() => connectPlatform('indeed')}>
+                Connect
+              </button>
+            )}
           </div>
-
           <div className="connected-status" role="status">
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 3, fontFamily: "'Space Mono',monospace" }}>
-              {connectedCount} / 4 platforms connected
-            </div>
+            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 3, fontFamily: "'Space Mono',monospace" }}>{connectedCount} / 4 platforms connected</div>
             <div style={{ fontSize: 11, color: 'var(--text2)' }}>
-              {li && gm
-                ? 'LinkedIn + Gmail connected. Naukri/Indeed need platform partnerships — see Info.'
-                : 'Use Connect for LinkedIn and Gmail (mock mode).'}
+              {connectedPlatforms.naukri ? 'Discovery Agent now includes Naukri coverage.' : 'Discovery Agent scanning LinkedIn + Gmail. Add Naukri for 3× more coverage.'}
             </div>
           </div>
-          <button
-            type="button"
-            className="btn-green"
-            style={{ width: '100%', padding: 12, fontSize: 12, textAlign: 'center', marginTop: 14, display: 'block' }}
-            onClick={() => switchTab('home')}
-          >
+          <button type="button" className="btn-green" style={{ width: '100%', padding: 12, fontSize: 12, textAlign: 'center', marginTop: 14, display: 'block' }} onClick={() => switchTab('home')}>
             Activate all agents → Dashboard
           </button>
         </div>
